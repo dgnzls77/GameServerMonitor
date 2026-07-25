@@ -1,4 +1,39 @@
 # Discord Game Server Monitor
+
+## Voidroute GAME-SERVER integration
+
+This fork adds a read-only `gameservercontrol` source for David's Windows
+`GAME-SERVER`. It produces one automatically refreshed Discord card containing
+every game registered in Game Server Control, including games such as Windrose
+that do not provide a standard public query protocol.
+
+The integration:
+
+- reads only `https://192.168.8.225:8790/api/monitor/status`;
+- authenticates with a dedicated monitor token, not the dashboard administrator
+  password;
+- validates GAME-SERVER's private certificate;
+- never exposes Windrose invite codes, configuration, logs, or control actions;
+- shows Satisfactory's public connection address when it is available; and
+- keeps the bot independent on `brutalapps`, allowing it to report when
+  GAME-SERVER is unreachable.
+
+The provided Compose deployment uses SQLite, publishes no ports, runs without
+Linux capabilities, and persists state under `./data`.
+
+Required `.env` values are documented in `.env.example`. Keep the real `.env`
+and monitor certificate under `/opt/discordgsm`; neither belongs in Git.
+
+After inviting the bot and choosing the Discord status channel, an administrator
+adds the aggregate card with:
+
+```text
+/addserver gameservercontrol
+Host: 192.168.8.225
+Query port: 8790
+```
+
+No `voidroute.net` DNS record is required for the bot itself.
 [![Python Package](https://github.com/DiscordGSM/GameServerMonitor/actions/workflows/python-package.yml/badge.svg)](https://github.com/DiscordGSM/GameServerMonitor/actions/workflows/python-package.yml)
 [![Docker Image](https://github.com/DiscordGSM/GameServerMonitor/actions/workflows/docker-image.yml/badge.svg)](https://github.com/DiscordGSM/GameServerMonitor/actions/workflows/docker-image.yml)
 [![Discord Shield](https://discordapp.com/api/guilds/680159496584429582/widget.png?style=shield)](https://discordgsm.com/discord)

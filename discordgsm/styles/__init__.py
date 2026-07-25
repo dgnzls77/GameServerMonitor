@@ -2,6 +2,7 @@ from typing import List, Optional, Type
 
 from .extra_large import ExtraLarge
 from .extra_small import ExtraSmall
+from .game_server_control import GameServerControlStyle
 from .large import Large
 from .medium import Medium
 from .small import Small
@@ -27,6 +28,8 @@ class Styles:
 
     @staticmethod
     def get(server: Server, style_id: Optional[str] = None) -> Style:
+        if server.game_id == "gameservercontrol":
+            return GameServerControlStyle(server)
         return _styles.get(
             style_id if style_id else server.style_id, _styles["Medium"]
         )(server)
