@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # discordgsm
+secrets/
 data/logs/*txt
 data/exports/
 data/servers.db
