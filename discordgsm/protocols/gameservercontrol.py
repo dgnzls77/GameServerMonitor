@@ -71,6 +71,7 @@ class GameServerControl(Protocol):
                     "maxPlayers": int(game.get("maxPlayers", 0) or 0),
                     "uptimeSeconds": int(game.get("uptimeSeconds", 0) or 0),
                     "connection": str(game.get("connection", "")),
+                    "inviteCode": str(game.get("inviteCode", "")),
                 }
             )
 

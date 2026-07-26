@@ -13,7 +13,9 @@ The integration:
 - authenticates with a dedicated monitor token, not the dashboard administrator
   password;
 - validates GAME-SERVER's private certificate;
-- never exposes Windrose invite codes, configuration, logs, or control actions;
+- exposes Windrose's current invite code to the configured member-facing
+  Discord status channel, but never exposes configuration, logs, credentials,
+  or control actions;
 - shows Satisfactory's public connection address when it is available; and
 - keeps the bot independent on `brutalapps`, allowing it to report when
   GAME-SERVER is unreachable.

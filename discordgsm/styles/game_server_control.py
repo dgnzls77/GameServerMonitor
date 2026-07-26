@@ -78,6 +78,9 @@ class GameServerControlStyle(Style):
             connection = str(game.get("connection", "")).strip()
             if connection:
                 lines.append(f"**Join:** `{connection}`")
+            invite_code = str(game.get("inviteCode", "")).strip()
+            if invite_code:
+                lines.append(f"**Invite code:** `{invite_code}`")
             embed.add_field(
                 name=f"{indicator} {game.get('displayName', 'Game')}",
                 value="\n".join(lines),

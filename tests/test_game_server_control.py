@@ -19,6 +19,7 @@ def sample_payload():
                 "maxPlayers": 0,
                 "uptimeSeconds": 90061,
                 "connection": "",
+                "inviteCode": "WIND-ROSE",
             },
             {
                 "gameId": "satisfactory",
@@ -31,6 +32,7 @@ def sample_payload():
                 "maxPlayers": 4,
                 "uptimeSeconds": 3661,
                 "connection": "satisfactory.voidroute.net:7777",
+                "inviteCode": "",
             },
         ],
     }
@@ -45,6 +47,7 @@ def test_control_payload_becomes_safe_aggregate_result(monkeypatch):
     assert result["maxplayers"] == 4
     assert result["ping"] == 12
     assert result["raw"]["games"][0]["connection"] == ""
+    assert result["raw"]["games"][0]["inviteCode"] == "WIND-ROSE"
 
 
 def test_control_style_lists_games_and_public_join_address():
@@ -65,8 +68,8 @@ def test_control_style_lists_games_and_public_join_address():
     assert embed["title"] == "Voidroute Game Servers"
     assert "2 of 2 hosted games online" in embed["description"]
     assert embed["fields"][0]["name"] == "🟢 Windrose"
+    assert "**Invite code:** `WIND-ROSE`" in embed["fields"][0]["value"]
     assert "satisfactory.voidroute.net:7777" in embed["fields"][1]["value"]
-    assert "invite" not in str(embed).lower()
 
 
 def test_control_style_reports_host_offline():
