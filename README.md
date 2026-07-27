@@ -25,6 +25,24 @@ The integration:
 The provided Compose deployment uses SQLite, publishes no ports, runs without
 Linux capabilities, and persists state under `./data`.
 
+## Minecraft Bedrock self-service allowlist
+
+The Voidroute deployment can maintain one persistent access post in the
+configured Minecraft Discord channel. Members select **Submit gamertag**, enter
+the exact Microsoft/Xbox gamertag from Minecraft, and receive a private result.
+
+This workflow uses a second, narrowly scoped credential and the dedicated
+`/api/integrations/minecraft/allowlist` endpoint. It cannot read configuration,
+control a game, restart a service, or use the dashboard administrator session.
+GAME-SERVER validates the gamertag again, rate-limits submissions, and records
+the Discord user ID and submitted gamertag in its local whitelist audit log.
+
+Set `MINECRAFT_WHITELIST_CHANNEL_ID`,
+`GAME_SERVER_CONTROL_ALLOWLIST_URL`, and
+`GAME_SERVER_CONTROL_ALLOWLIST_TOKEN` in the private deployment environment.
+The message ID is retained under the existing writable `./data` volume so bot
+restarts update the original post instead of creating duplicates.
+
 Required `.env` values are documented in `.env.example`. Keep the real `.env`
 and monitor certificate under `/opt/discordgsm`; neither belongs in Git.
 
