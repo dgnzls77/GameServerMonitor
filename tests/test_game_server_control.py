@@ -31,7 +31,7 @@ def sample_payload():
                 "playerCount": 2,
                 "maxPlayers": 4,
                 "uptimeSeconds": 3661,
-                "connection": "satisfactory.voidroute.net:7777",
+                "connection": "games.voidroute.net:7777",
                 "inviteCode": "",
             },
         ],
@@ -68,8 +68,10 @@ def test_control_style_lists_games_and_public_join_address():
     assert embed["title"] == "Voidroute Game Servers"
     assert "2 of 2 hosted games online" in embed["description"]
     assert embed["fields"][0]["name"] == "🟢 Windrose"
+    assert "**Players:** 0" in embed["fields"][0]["value"]
     assert "**Invite code:** `WIND-ROSE`" in embed["fields"][0]["value"]
-    assert "satisfactory.voidroute.net:7777" in embed["fields"][1]["value"]
+    assert "**Players:** 2/4" in embed["fields"][1]["value"]
+    assert "games.voidroute.net:7777" in embed["fields"][1]["value"]
 
 
 def test_control_style_reports_host_offline():

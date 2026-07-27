@@ -16,7 +16,9 @@ The integration:
 - exposes Windrose's current invite code to the configured member-facing
   Discord status channel, but never exposes configuration, logs, credentials,
   or control actions;
-- shows Satisfactory's public connection address when it is available; and
+- shows each direct-connect game's public connection address when available;
+- shows player counts even when a game has an unlimited or unspecified
+  maximum; and
 - keeps the bot independent on `brutalapps`, allowing it to report when
   GAME-SERVER is unreachable.
 

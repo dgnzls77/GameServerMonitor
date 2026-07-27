@@ -66,11 +66,12 @@ class GameServerControlStyle(Style):
             healthy = bool(game.get("healthy"))
             indicator = "🟢" if running and healthy else "🟡" if running else "🔴"
             lines = [f"**Status:** {'Online' if running else 'Offline'}"]
+            player_count = int(game.get("playerCount", 0) or 0)
             max_players = int(game.get("maxPlayers", 0) or 0)
             if max_players > 0:
-                lines.append(
-                    f"**Players:** {int(game.get('playerCount', 0) or 0)}/{max_players}"
-                )
+                lines.append(f"**Players:** {player_count}/{max_players}")
+            else:
+                lines.append(f"**Players:** {player_count}")
             if running:
                 lines.append(
                     f"**Uptime:** {self._uptime(int(game.get('uptimeSeconds', 0) or 0))}"
