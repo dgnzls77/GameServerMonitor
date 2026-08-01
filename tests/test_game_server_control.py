@@ -109,6 +109,18 @@ def test_control_style_lists_games_and_public_join_address():
     assert "games.voidroute.net:7777" in embed["fields"][1]["value"]
 
 
+def test_live_but_unhealthy_game_is_not_reported_online():
+    payload = sample_payload()
+    payload["games"][0]["healthy"] = False
+    payload["games"][0]["gameState"] = "Unhealthy"
+
+    _, embed = render(payload)
+
+    assert "2 of 3 hosted games online" in embed["description"]
+    assert embed["fields"][0]["name"].endswith("Windrose")
+    assert "**Status:** Unhealthy" in embed["fields"][0]["value"]
+
+
 def test_join_password_is_absent_when_unset_or_empty(monkeypatch):
     monkeypatch.delenv("SONS_OF_THE_FOREST_JOIN_PASSWORD", raising=False)
     _, unset_embed = render()

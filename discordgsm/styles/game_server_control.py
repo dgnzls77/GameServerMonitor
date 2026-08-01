@@ -50,7 +50,9 @@ class GameServerControlStyle(Style):
             return embed
 
         games = raw.get("games", [])
-        online = sum(1 for game in games if game.get("running"))
+        online = sum(
+            1 for game in games if game.get("running") and game.get("healthy")
+        )
         color = (
             Color.from_rgb(35, 165, 90)
             if online == len(games) and games
@@ -70,7 +72,8 @@ class GameServerControlStyle(Style):
             running = bool(game.get("running"))
             healthy = bool(game.get("healthy"))
             indicator = "🟢" if running and healthy else "🟡" if running else "🔴"
-            lines = [f"**Status:** {'Online' if running else 'Offline'}"]
+            status = "Online" if running and healthy else "Unhealthy" if running else "Offline"
+            lines = [f"**Status:** {status}"]
             player_count = int(game.get("playerCount", 0) or 0)
             max_players = int(game.get("maxPlayers", 0) or 0)
             if max_players > 0:
