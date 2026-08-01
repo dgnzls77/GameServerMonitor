@@ -1,6 +1,11 @@
+import json
+import logging
+
 from discordgsm.protocols.gameservercontrol import GameServerControl
 from discordgsm.server import Server
 from discordgsm.styles import Styles
+
+FAKE_JOIN_PASSWORD = "test-sotf-secret-9Qv7"
 
 
 def sample_payload():
@@ -51,6 +56,22 @@ def sample_payload():
     }
 
 
+def render(payload=None, game_filter=None):
+    result = GameServerControl.result_from_payload(
+        payload or sample_payload(), 12, game_filter=game_filter
+    )
+    server = Server.new(
+        guild_id=1,
+        channel_id=2,
+        game_id="gameservercontrol",
+        address="192.168.8.225",
+        query_port=8790,
+        query_extra={} if game_filter is None else {"game_filter": game_filter},
+        result=result,
+    )
+    return result, Styles.get(server).embed().to_dict()
+
+
 def test_control_payload_becomes_safe_aggregate_result(monkeypatch):
     monkeypatch.setenv("GAME_SERVER_CONTROL_BRAND", "Voidroute Game Servers")
     result = GameServerControl.result_from_payload(sample_payload(), 12)
@@ -86,6 +107,46 @@ def test_control_style_lists_games_and_public_join_address():
     assert "**Invite code:** `WIND-ROSE`" in embed["fields"][0]["value"]
     assert "**Players:** 2/4" in embed["fields"][1]["value"]
     assert "games.voidroute.net:7777" in embed["fields"][1]["value"]
+
+
+def test_join_password_is_absent_when_unset_or_empty(monkeypatch):
+    monkeypatch.delenv("SONS_OF_THE_FOREST_JOIN_PASSWORD", raising=False)
+    _, unset_embed = render()
+    assert all("Password:" not in field["value"] for field in unset_embed["fields"])
+
+    monkeypatch.setenv("SONS_OF_THE_FOREST_JOIN_PASSWORD", "   ")
+    _, empty_embed = render()
+    assert all("Password:" not in field["value"] for field in empty_embed["fields"])
+
+
+def test_join_password_is_aggregate_sotf_only_and_secret_isolated(
+    monkeypatch, capsys, caplog
+):
+    monkeypatch.setenv("SONS_OF_THE_FOREST_JOIN_PASSWORD", FAKE_JOIN_PASSWORD)
+    caplog.set_level(logging.DEBUG)
+
+    result, embed = render()
+    values = {field["name"]: field["value"] for field in embed["fields"]}
+    expected = f"**Password:** ||{FAKE_JOIN_PASSWORD}||"
+
+    assert values["🟢 Sons of the Forest"].splitlines().count(expected) == 1
+    assert FAKE_JOIN_PASSWORD not in values["🟢 Windrose"]
+    assert FAKE_JOIN_PASSWORD not in values["🟢 Satisfactory"]
+    assert FAKE_JOIN_PASSWORD not in json.dumps(result, sort_keys=True)
+
+    captured = capsys.readouterr()
+    assert FAKE_JOIN_PASSWORD not in captured.out
+    assert FAKE_JOIN_PASSWORD not in captured.err
+    assert FAKE_JOIN_PASSWORD not in caplog.text
+
+
+def test_join_password_is_absent_from_filtered_sotf_card(monkeypatch):
+    monkeypatch.setenv("SONS_OF_THE_FOREST_JOIN_PASSWORD", FAKE_JOIN_PASSWORD)
+    result, embed = render(game_filter="SonsOfTheForest")
+
+    assert len(result["raw"]["games"]) == 1
+    assert FAKE_JOIN_PASSWORD not in embed["fields"][0]["value"]
+    assert "Password:" not in embed["fields"][0]["value"]
 
 
 def test_control_filter_selects_sons_of_the_forest_case_insensitively():

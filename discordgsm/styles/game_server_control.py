@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from discord import Color, Embed
@@ -60,6 +61,10 @@ class GameServerControlStyle(Style):
             description=f"**{online} of {len(games)} hosted games online**",
             color=color,
         )
+        sons_of_the_forest_password = os.getenv(
+            "SONS_OF_THE_FOREST_JOIN_PASSWORD", ""
+        ).strip()
+        is_aggregate = len(games) > 1
 
         for game in games:
             running = bool(game.get("running"))
@@ -82,6 +87,12 @@ class GameServerControlStyle(Style):
             invite_code = str(game.get("inviteCode", "")).strip()
             if invite_code:
                 lines.append(f"**Invite code:** `{invite_code}`")
+            if (
+                is_aggregate
+                and str(game.get("gameId", "")).casefold() == "sonsoftheforest"
+                and sons_of_the_forest_password
+            ):
+                lines.append(f"**Password:** ||{sons_of_the_forest_password}||")
             embed.add_field(
                 name=f"{indicator} {game.get('displayName', 'Game')}",
                 value="\n".join(lines),

@@ -27,6 +27,9 @@ Linux capabilities, and persists state under `./data`.
 
 Required `.env` values are documented in `.env.example`. Keep the real `.env`
 and monitor certificate under `/opt/discordgsm`; neither belongs in Git.
+`SONS_OF_THE_FOREST_JOIN_PASSWORD` is an optional root-only server secret. When
+set, it is rendered only as a Discord spoiler in the Sons of the Forest field
+of the aggregate card. Never commit or log its real value.
 
 After inviting the bot and choosing the Discord status channel, an administrator
 adds the aggregate card with:
