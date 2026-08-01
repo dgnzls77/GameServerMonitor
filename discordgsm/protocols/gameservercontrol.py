@@ -45,12 +45,17 @@ class GameServerControl(Protocol):
                     )
                 payload = await response.json()
 
+        game_filter = str(self.kv.get("game_filter", "")).strip() or None
         return self.result_from_payload(
-            payload, int((time.monotonic() - start) * 1000)
+            payload,
+            int((time.monotonic() - start) * 1000),
+            game_filter=game_filter,
         )
 
     @staticmethod
-    def result_from_payload(payload: dict, ping: int):
+    def result_from_payload(
+        payload: dict, ping: int, game_filter: str | None = None
+    ):
         games = payload.get("games")
         if not isinstance(games, list):
             raise ValueError("Game Server Control payload has no games list")
@@ -74,6 +79,22 @@ class GameServerControl(Protocol):
                     "inviteCode": str(game.get("inviteCode", "")),
                 }
             )
+
+        if game_filter:
+            requested_id = game_filter.casefold()
+            selected_game = next(
+                (
+                    game
+                    for game in safe_games
+                    if game["gameId"].casefold() == requested_id
+                ),
+                None,
+            )
+            if selected_game is None:
+                raise ValueError(
+                    f"Game Server Control payload has no gameId {game_filter!r}"
+                )
+            safe_games = [selected_game]
 
         players = sum(
             game["playerCount"] for game in safe_games if game["running"]

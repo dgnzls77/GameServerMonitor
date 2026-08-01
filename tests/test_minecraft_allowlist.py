@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from discordgsm.minecraft_allowlist import (
@@ -33,3 +35,8 @@ def test_whitelist_post_has_persistent_submission_button():
     embed = whitelist_embed().to_dict()
     assert embed["title"] == "Minecraft Bedrock access"
     assert "games.voidroute.net" in embed["description"]
+
+def test_retired_whitelist_is_not_wired_into_bot_startup():
+    main_source = (Path(__file__).parents[1] / "discordgsm" / "main.py").read_text()
+    assert "register_minecraft_whitelist_view" not in main_source
+    assert "ensure_minecraft_whitelist_post" not in main_source

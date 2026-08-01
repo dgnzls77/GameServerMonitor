@@ -34,6 +34,19 @@ def sample_payload():
                 "connection": "games.voidroute.net:7777",
                 "inviteCode": "",
             },
+            {
+                "gameId": "sonsoftheforest",
+                "displayName": "Sons of the Forest",
+                "running": True,
+                "healthy": True,
+                "reachable": True,
+                "gameState": "Online",
+                "playerCount": 0,
+                "maxPlayers": 8,
+                "uptimeSeconds": 934,
+                "connection": "68.108.85.1:8766",
+                "inviteCode": "",
+            },
         ],
     }
 
@@ -44,7 +57,8 @@ def test_control_payload_becomes_safe_aggregate_result(monkeypatch):
 
     assert result["name"] == "Voidroute Game Servers"
     assert result["numplayers"] == 2
-    assert result["maxplayers"] == 4
+    assert result["maxplayers"] == 12
+    assert len(result["raw"]["games"]) == 3
     assert result["ping"] == 12
     assert result["raw"]["games"][0]["connection"] == ""
     assert result["raw"]["games"][0]["inviteCode"] == "WIND-ROSE"
@@ -66,12 +80,49 @@ def test_control_style_lists_games_and_public_join_address():
 
     assert style.standalone is True
     assert embed["title"] == "Voidroute Game Servers"
-    assert "2 of 2 hosted games online" in embed["description"]
+    assert "3 of 3 hosted games online" in embed["description"]
     assert embed["fields"][0]["name"] == "🟢 Windrose"
     assert "**Players:** 0" in embed["fields"][0]["value"]
     assert "**Invite code:** `WIND-ROSE`" in embed["fields"][0]["value"]
     assert "**Players:** 2/4" in embed["fields"][1]["value"]
     assert "games.voidroute.net:7777" in embed["fields"][1]["value"]
+
+
+def test_control_filter_selects_sons_of_the_forest_case_insensitively():
+    result = GameServerControl.result_from_payload(
+        sample_payload(), 12, game_filter="SonsOfTheForest"
+    )
+    server = Server.new(
+        guild_id=1,
+        channel_id=2,
+        game_id="gameservercontrol",
+        address="192.168.8.225",
+        query_port=8790,
+        query_extra={"game_filter": "sonsoftheforest"},
+        result=result,
+    )
+    embed = Styles.get(server).embed().to_dict()
+
+    assert result["numplayers"] == 0
+    assert result["maxplayers"] == 8
+    assert len(result["raw"]["games"]) == 1
+    assert embed["description"] == "**1 of 1 hosted games online**"
+    assert len(embed["fields"]) == 1
+    assert embed["fields"][0]["name"] == "\U0001f7e2 Sons of the Forest"
+    assert "**Players:** 0/8" in embed["fields"][0]["value"]
+    assert "**Uptime:** 15m" in embed["fields"][0]["value"]
+    assert "**Join:** `68.108.85.1:8766`" in embed["fields"][0]["value"]
+
+
+def test_control_filter_rejects_unknown_game_id():
+    try:
+        GameServerControl.result_from_payload(
+            sample_payload(), 12, game_filter="unknown-game"
+        )
+    except ValueError as error:
+        assert "unknown-game" in str(error)
+    else:
+        raise AssertionError("unknown game filter should fail closed")
 
 
 def test_control_style_reports_host_offline():

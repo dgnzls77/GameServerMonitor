@@ -29,10 +29,6 @@ from discordgsm.async_utils import run_in_new_loop, to_chunks
 from discordgsm.environment import AdvertiseType, env
 from discordgsm.gamedig import GamedigGame
 from discordgsm.logger import Logger
-from discordgsm.minecraft_allowlist import (
-    ensure_minecraft_whitelist_post,
-    register_minecraft_whitelist_view,
-)
 from discordgsm.protocols import Protocol, protocols
 from discordgsm.server import Server
 from discordgsm.service import (
@@ -80,7 +76,6 @@ shard_count = int(os.getenv("APP_SHARD_COUNT", "1"))
 client = AutoShardedClient(
     intents=intents, shard_ids=shard_ids, shard_count=shard_count
 )
-register_minecraft_whitelist_view(client)
 
 
 # region Application event
@@ -100,13 +95,6 @@ async def on_ready():
 
     await sync_commands(whitelist_guilds)
     await tasks_fetch_messages()
-    try:
-        await ensure_minecraft_whitelist_post(client)
-    except Exception as error:
-        Logger.error(
-            f"Minecraft allowlist post setup failed: {type(error).__name__}: {error}"
-        )
-
     if not tasks_query_servers.is_running():
         tasks_query_servers.start()
 
