@@ -44,7 +44,7 @@ def sample_payload():
                 "playerCount": 0,
                 "maxPlayers": 8,
                 "uptimeSeconds": 934,
-                "connection": "68.108.85.1:8766",
+                "connection": "68.108.85.1:27016",
                 "inviteCode": "",
             },
         ],
@@ -111,7 +111,7 @@ def test_control_filter_selects_sons_of_the_forest_case_insensitively():
     assert embed["fields"][0]["name"] == "\U0001f7e2 Sons of the Forest"
     assert "**Players:** 0/8" in embed["fields"][0]["value"]
     assert "**Uptime:** 15m" in embed["fields"][0]["value"]
-    assert "**Join:** `68.108.85.1:8766`" in embed["fields"][0]["value"]
+    assert "**Join:** `68.108.85.1:27016`" in embed["fields"][0]["value"]
 
 
 def test_control_filter_rejects_unknown_game_id():

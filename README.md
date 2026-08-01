@@ -127,3 +127,7 @@ case-insensitive exact Game Server Control `gameId`. For example,
 `{"game_filter":"sonsoftheforest"}` creates a Sons of the Forest-only card.
 If the requested ID is not present, the query fails instead of publishing an
 empty status card. Omitting `game_filter` preserves the aggregate card.
+
+Sons of the Forest Direct Connect uses its Steam query endpoint. Its monitor
+connection must therefore use the current numeric public IPv4 with port
+`27016`, not gameplay port `8766` and not a DNS hostname.
