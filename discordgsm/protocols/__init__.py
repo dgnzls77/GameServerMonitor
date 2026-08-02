@@ -15,6 +15,7 @@ from .gamespy1 import GameSpy1
 from .gamespy2 import GameSpy2
 from .gamespy3 import GameSpy3
 from .gportal import GPortal
+from .gameservercontrol import GameServerControl
 from .hexen2 import Hexen2
 from .minecraft import Minecraft
 from .nadeo import Nadeo

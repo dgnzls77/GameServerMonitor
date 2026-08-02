@@ -95,7 +95,6 @@ async def on_ready():
 
     await sync_commands(whitelist_guilds)
     await tasks_fetch_messages()
-
     if not tasks_query_servers.is_running():
         tasks_query_servers.start()
 

@@ -119,6 +119,7 @@ front,The Front (2023),front,port=27015
 fs22,Farming Simulator 22 (2021),source,port=27015
 
 garrysmod,Garry's Mod (2004),source,port=27015
+gameservercontrol,Voidroute Game Servers,gameservercontrol,port_query=8790
 ges,GoldenEye: Source (2010),source,port=27015
 giantscitizenkabuto,Giants: Citizen Kabuto (2000),gamespy1,port_query=8911
 globaloperations,Global Operations (2002),gamespy1,port_query=28672
